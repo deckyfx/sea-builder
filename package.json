@@ -1,0 +1,21 @@
+{
+  "name": "sea-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "bin": "dist/bin.js",
+  "scripts": {
+    "build": "rimraf ./dist && tsc && chmod +x ./dist/cli.js",
+    "start": "rimraf ./build && yarn build && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@vercel/ncc": "^0.38.1",
+    "postject": "^1.0.0-alpha.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4"
+  }
+}
