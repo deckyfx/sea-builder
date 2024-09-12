@@ -6,6 +6,43 @@ import { spawn } from "node:child_process";
 // @ts-ignore:next-line
 import { inject } from "postject";
 
+const ARGV = process.argv.slice(2);
+
+const SKIP_BUILD = ARGV.some((arg) => arg === "--skip-build") ? true : false;
+
+function getArgvValue(argv: string) {
+  return ARGV.find((arg) => {
+    if (arg.startsWith("--source")) {
+      const path = arg.split("=")[1];
+      if (path) {
+        return true;
+      }
+    }
+    return false;
+  });
+}
+
+function getEntryOutFile() {
+  const custom_path = getArgvValue("--entry-out");
+  return custom_path || "index.js";
+}
+
+function getBuildPath() {
+  const custom_path = getArgvValue("--source");
+  if (!custom_path) {
+    return ["./", "build"];
+  }
+  return custom_path.split("/");
+}
+
+function getAssetPath() {
+  const custom_path = getArgvValue("--assets");
+  if (!custom_path) {
+    return ["./", "assets"];
+  }
+  return custom_path.split("/");
+}
+
 const [major, minor, patch] = process.versions.node.split(".").map(Number);
 
 if (major < 20) {
@@ -35,27 +72,44 @@ const PackageJSON: {
   [key: string]: any;
 } = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 
-if (!PackageJSON.name) {
-  console.log(`Make sure package.json has name property`);
-  process.exit(1);
+function getAppName() {
+  const custom_name = getArgvValue("--name");
+  if (!custom_name) {
+    if (!PackageJSON.name) {
+      console.log(
+        `Make sure package.json has name property, or set app name with --name argument`
+      );
+      process.exit(1);
+    }
+    const chunks = PackageJSON.name.split("/");
+    return chunks.length > 0 ? chunks[chunks.length - 1] : chunks[0];
+  }
+  return custom_name;
 }
 
-if (!PackageJSON.main) {
-  console.log(
-    `Make sure package.json has main property pointing to built result entry`
-  );
-  process.exit(1);
+function getEntryInFile() {
+  const custom_path = getArgvValue("--entry-in");
+  if (!custom_path) {
+    if (!PackageJSON.main) {
+      console.log(
+        `Make sure package.json has main property pointing to build in entry, or set it with --entry-in argument`
+      );
+      process.exit(1);
+    }
+    return PackageJSON.main;
+  }
+  return custom_path;
 }
 
-if (!PackageJSON.scripts.build) {
+if (!SKIP_BUILD && !PackageJSON.scripts.build) {
   console.log(
-    `Make sure package.json has scripts.build property to handle the buiild proccess,`
+    `Make sure package.json has scripts.build property to handle the build process, or you can skip build process with --skip-build argument `
   );
   process.exit(1);
 }
 
 const NODE_PATH = process.execPath;
-const BUILD_PATH_ROOT = ["./", "build"];
+const BUILD_PATH_ROOT = getBuildPath();
 const VERCEL_NCC_EXECUTABLE_PATH = [
   "./",
   "node_modules",
@@ -65,15 +119,14 @@ const VERCEL_NCC_EXECUTABLE_PATH = [
   "ncc",
   "cli.js",
 ];
-const chunks = PackageJSON.name.split("/");
-const APP_NAME = chunks.length > 0 ? chunks[chunks.length - 1] : chunks[0];
+const APP_NAME = getAppName();
 const APP_BLOB_NAME = `${APP_NAME}.blob`;
-const DIST_SRC_ENTRY = PackageJSON.main;
-const SEA_ENTRY_PATH = BUILD_PATH_ROOT.concat("index.js");
+const DIST_SRC_ENTRY = getEntryInFile();
+const SEA_ENTRY_PATH = BUILD_PATH_ROOT.concat(getEntryOutFile());
 const SEA_BLOB_PATH = BUILD_PATH_ROOT.concat(APP_BLOB_NAME);
 const SEA_CONFIG_PATH = BUILD_PATH_ROOT.concat("sea-config.json");
 const SEA_APP_PATH = BUILD_PATH_ROOT.concat(APP_NAME);
-const ASSETS_PATH = ["./", "assets"];
+const ASSETS_PATH = getAssetPath();
 
 function createDirectoryIfNotExists(directoryPath: string) {
   try {
@@ -92,7 +145,6 @@ function createDirectoryIfNotExists(directoryPath: string) {
 function runCommand(command: string, args: string[] = []) {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
     const proccess = spawn(command, args, { stdio: "inherit" });
-    console.log(">>>> ", command, args.join(" "));
     let stdoutData = "";
     let stderrData = "";
 
@@ -169,11 +221,13 @@ async function main() {
 
     createDirectoryIfNotExists(path.join(...BUILD_PATH_ROOT));
 
-    console.log("Running: npm build");
-    await runCommand("npm", ["run", "build"]);
-    console.log("");
+    if (!SKIP_BUILD) {
+      console.log("Running: npm build");
+      await runCommand("npm", ["run", "build"]);
+      console.log("");
+    }
 
-    console.log("Build Dist");
+    console.log("Compiling source into single file");
     await runCommand(path.join(...VERCEL_NCC_EXECUTABLE_PATH), [
       "build",
       DIST_SRC_ENTRY,
@@ -182,25 +236,25 @@ async function main() {
     ]);
     console.log("");
 
-    console.log("Generate sea config file");
+    console.log("Generating SEA config file");
     fs.writeFileSync(
       path.join(...SEA_CONFIG_PATH),
       JSON.stringify(SEA_CONFIG_TEMPLATE)
     );
     console.log("");
 
-    console.log("Generate SEA blob");
+    console.log("Generating SEA blob");
     await runCommand("node", [
       "--experimental-sea-config",
       path.join(...SEA_CONFIG_PATH),
     ]);
     console.log("");
 
-    console.log("Generate blank SEA");
+    console.log("Generating blank SEA");
     await runCommand("cp", [NODE_PATH, path.join(...SEA_APP_PATH)]);
     console.log("");
 
-    console.log("Inject prgram data into SEA");
+    console.log("Injecting source and assets into SEA");
     await inject(
       path.join(...SEA_APP_PATH),
       "NODE_SEA_BLOB",

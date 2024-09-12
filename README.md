@@ -33,10 +33,30 @@ Install dependecies
 
 `yarn install`
 
+## Latest Version
+
+1.0.4
+
 ## Running
 
 Just use command `npx @decky.fx/sea-builder@{latest_version}`
 
 For Example
 
-Just use command `npx @decky.fx/sea-builder@1.0.3`
+Just use command `npx @decky.fx/sea-builder@1.0.4`
+
+## Arguments
+
+All these arguments are optional
+| **Argument** | **Default**                      | **Explanation**                                                                                                         |
+|--------------|----------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| --skip-build | true                             | By default sea-builder will try to build your project, pack it into single file, then compile it into executable binary |
+| --name       | package.json<br>`name` attribute | The final executable file name to be generated                                                                          |
+| --entry-in   | package.json `main` attribute    | The entry point of your program, ussualy it is the index.js                                                             |
+| --entry-out  | index.js                         | The entry point of the program, after it got packed by @vercel/ncc, before it get compiled                                                          |
+
+
+## Under the hood
+- This script uses node20 experimental feature of single executable application (sea)
+- This script uses posject to inject the codes, visit [nodejs/postject](https://github.com/nodejs/postject) for more info
+- This script uses ncc to pack the source code into single file, visit [vercel/ncc](https://github.com/vercel/ncc) for more info
