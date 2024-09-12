@@ -48,12 +48,12 @@ Just use command `npx @decky.fx/sea-builder@1.0.4`
 ## Arguments
 
 All these arguments are optional
-| **Argument** | **Default**                      | **Explanation**                                                                                                         |
-|--------------|----------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| --skip-build | true                             | By default sea-builder will try to build your project, pack it into single file, then compile it into executable binary |
-| --name       | package.json<br>`name` attribute | The final executable file name to be generated                                                                          |
-| --entry-in   | package.json `main` attribute    | The entry point of your program, ussualy it is the index.js                                                             |
-| --entry-out  | index.js                         | The entry point of the program, after it got packed by @vercel/ncc, before it get compiled                                                          |
+| **Argument** | **Default**                      | **Explanation**                                                                                                                 |
+|--------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| --skip-build | true                             | By default sea-builder will try to build your project, <br>pack it into single file, <br>then compile it into executable binary |
+| --name       | package.json<br>`name` attribute | The final executable file name to be generated                                                                                  |
+| --entry-in   | package.json `main` attribute    | The entry point of your program, <br>ussualy it is the index.js                                                                 |
+| --entry-out  | index.js                         | The entry point of the program, <br>after it got packed by @vercel/ncc, before it get compiled 
 
 
 ## Under the hood
