@@ -1,6 +1,6 @@
 {
   "name": "@decky.fx/sea-builder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NodeJS SEA Builder script",
   "main": "dist/index.js",
   "bin": "dist/cli.js",
