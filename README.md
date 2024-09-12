@@ -35,4 +35,8 @@ Install dependecies
 
 ## Running
 
-Just use command npx sea-builder
+Just use command `npx @decky.fx/sea-builder@{latest_version}`
+
+For Example
+
+Just use command `npx @decky.fx/sea-builder@1.0.3`

@@ -1,6 +1,6 @@
 {
   "name": "@decky.fx/sea-builder",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NodeJS SEA Builder script",
   "main": "dist/index.js",
   "bin": "dist/cli.js",
@@ -14,7 +14,7 @@
     "build": "rimraf ./dist && tsc && chmod +x ./dist/cli.js",
     "start": "rimraf ./build && yarn build && node dist/index.js",
     "publish": "npm publish --access public",
-    "unpublish": "npm unpublish @decky.fx/sea-builder@1.0.0"
+    "unpublish": "npm unpublish @decky.fx/sea-builder@1.0.2"
   },
   "files": [
     "dist/**/*"
@@ -33,10 +33,12 @@
     "type": "git",
     "url": "git+https://github.com/deckyfx/sea-builder.git"
   },
+  "dependencies": {
+    "@vercel/ncc": "^0.38.1",
+    "postject": "^1.0.0-alpha.6"
+  },
   "devDependencies": {
     "@types/node": "^22.5.4",
-    "@vercel/ncc": "^0.38.1",
-    "postject": "^1.0.0-alpha.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.4"
   }
