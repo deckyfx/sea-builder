@@ -228,6 +228,9 @@ async function main() {
     }
 
     console.log("Compiling source into single file");
+    console.log("> Install @vercel/ncc");
+    await runCommand("npm", ["install", "--save-dev", "@vercel/ncc"]);
+    console.log("> Compiling...");
     await runCommand(path.join(...VERCEL_NCC_EXECUTABLE_PATH), [
       "build",
       DIST_SRC_ENTRY,

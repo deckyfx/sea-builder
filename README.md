@@ -38,7 +38,7 @@ Install dependecies
 
 ## Latest Version
 
-1.0.4
+1.0.5
 
 ## Running
 
@@ -46,7 +46,7 @@ Just use command `npx @decky.fx/sea-builder@{latest_version}`
 
 For Example
 
-Just use command `npx @decky.fx/sea-builder@1.0.4`
+Just use command `npx @decky.fx/sea-builder@1.0.5`
 
 ## Arguments
 
