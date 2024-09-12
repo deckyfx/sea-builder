@@ -2,7 +2,7 @@
 
 ## What is this?
 
-This is a script to build a SEA, the nodejs version 20 and higher exeperimental feature to compile the nodejs project into one executable binaty, visit [nodejs documentation](https://nodejs.org/api/single-executable-applications.html) for more info
+This is a script to build a SEA, the nodejs version 20 and higher exeperimental feature to compile nodejs scripts into one executable binary, visit [nodejs documentation](https://nodejs.org/api/single-executable-applications.html) for more info
 
 ## Requirement
 
